@@ -1,0 +1,31 @@
+@model IEnumerable<PostModel>
+
+@{
+    ViewData["Title"] = "Posts";
+}
+
+<h2>Recent Posts</h2>
+@using (var form = Html.BeginForm(FormMethod.Get))
+{
+    <input class="btn bg-secondary" asp-action="Add" value="Add Post" type="submit"/>
+}
+
+<br>
+<br>
+@foreach (var item in Model)
+{
+    <div style="display: flex;">
+        @using (var form = Html.BeginForm("RemovePost", "Posts", new { id = item.ID }, FormMethod.Post))
+        {
+            <input style="display: inline;margin-right: 9px" type="submit" value="X"/>
+        }
+        <h2>@item.PostTitle</h2>
+        @using (var form = Html.BeginForm("Update", "Posts", new { id = item.ID }, FormMethod.Get))
+        {
+            <input style="display: inline;margin-right: 9px" type="submit" value="edit"/>
+        }
+    </div>
+    <p>@Html.DisplayFor(modelItem => item.PostBody)</p>
+
+    <br>
+}

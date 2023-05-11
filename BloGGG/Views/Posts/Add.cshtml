@@ -1,0 +1,28 @@
+@model PostModel
+
+<h2>Add a Post</h2>
+
+
+@using (var form = Html.BeginForm("Add", "Posts", FormMethod.Post))
+{
+    <div>
+        @Html.LabelFor(m => m.PostTitle)
+        @Html.TextBoxFor(m => m.PostTitle)
+    </div>
+    <br/>
+    <div>
+        @Html.LabelFor(m => m.PostTagsString)
+        @Html.TextBoxFor(m => m.PostTagsString)
+    </div>
+    <br/>
+    <div>
+        @Html.TextAreaFor(m => m.PostBody, new
+        {
+            rows = 20,
+            cols = "130%"
+        })
+    </div>
+    @* <textarea asp-for="@ViewData["post"]" class="h-100" rows="20" cols="130%" ></textarea> *@
+    <input type="submit" class="btn bg-info" value="Submit Post">
+}
+<p>@ViewData["post"]</p>

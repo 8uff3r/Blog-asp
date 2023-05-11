@@ -1,0 +1,34 @@
+@model PostModel
+
+<h2>Add a Post</h2>
+
+
+@using (var form = Html.BeginForm("Update", "Posts", FormMethod.Post))
+{
+    <div>
+        @Html.LabelFor(m => m.PostTitle)
+        @Html.TextBoxFor(m => m.PostTitle, new
+        {
+            value = Model.PostTitle
+        })
+    </div>
+    <br/>
+    <div>
+        @Html.LabelFor(m => m.PostTagsString)
+        @Html.TextBoxFor(m => m.PostTagsString, new
+        {
+            value = string.Join(",", Model.PostTags)
+        })
+    </div>
+    <br/>
+    <div>
+        @Html.TextAreaFor(m => m.PostBody, new
+        {
+            rows = 20,
+            cols = "130%",
+            value = Model.PostBody
+        })
+    </div>
+    <input type="submit" class="btn bg-info" value="Update Post">
+}
+<p>@ViewData["post"]</p>
