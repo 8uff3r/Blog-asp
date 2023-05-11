@@ -1,0 +1,20 @@
+@using Westwind.AspNetCore.Markdown
+@model PostModel
+
+<div id="p-@Model.ID">
+
+    @string.Join(", ", Model.PostTags)
+
+    <div style="display: flex;">
+        @using (var _ = Html.BeginForm("RemovePost", "Posts", new { id = Model.ID }, FormMethod.Post))
+        {
+            <input style="display: inline;margin-right: 9px" type="submit" value="X"/>
+        }
+        <h2>@Model.PostTitle</h2>
+        @using (var _ = Html.BeginForm("Update", "Posts", new { id = Model.ID }, FormMethod.Get))
+        {
+            <input style="display: inline;margin-right: 9px" type="submit" value="edit"/>
+        }
+    </div>
+    <p>@Markdown.ParseHtmlString(Model.PostBody)</p>
+</div>

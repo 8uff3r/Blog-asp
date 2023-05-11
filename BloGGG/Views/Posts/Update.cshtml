@@ -1,9 +1,11 @@
 @model PostModel
-
+@{
+    Model.PostTagsString = string.Join(",", Model.PostTags);
+}
 <h2>Add a Post</h2>
 
 
-@using (var form = Html.BeginForm("Update", "Posts", FormMethod.Post))
+@using (var _ = Html.BeginForm("Update", "Posts", FormMethod.Post))
 {
     <div>
         @Html.LabelFor(m => m.PostTitle)
@@ -17,7 +19,7 @@
         @Html.LabelFor(m => m.PostTagsString)
         @Html.TextBoxFor(m => m.PostTagsString, new
         {
-            value = string.Join(",", Model.PostTags)
+            value = Model.PostTagsString
         })
     </div>
     <br/>
@@ -31,4 +33,3 @@
     </div>
     <input type="submit" class="btn bg-info" value="Update Post">
 }
-<p>@ViewData["post"]</p>
