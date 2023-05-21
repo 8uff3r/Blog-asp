@@ -1,0 +1,9 @@
+@model IEnumerable<PostModel>
+
+<div id="posts">
+    @foreach (var item in Model)
+    {
+        @Html.Partial("post", item)
+        <br>
+    }
+</div>

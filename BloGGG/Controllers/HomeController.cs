@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
 using BloGGG.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BloGGG.Controllers;
 
+[AllowAnonymous]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

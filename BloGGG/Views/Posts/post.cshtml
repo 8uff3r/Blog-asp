@@ -1,20 +1,33 @@
 @using Westwind.AspNetCore.Markdown
+@using Microsoft.AspNetCore.Authorization
+@using BloGGG.Authorization
+@inject IAuthorizationService AuthorizationService
 @model PostModel
 
-<div id="p-@Model.ID">
+@{
+    bool isAthed = (await AuthorizationService.AuthorizeAsync(User, Model, PostOperations.Create)).Succeeded;
+}
+<div id="p-@Model.ID" style="background-color: #2c3034" class="rounded-3 p-4">
 
-    @string.Join(", ", Model.PostTags)
 
+    @foreach (string tag in Model.PostTags)
+    {
+        <a href="#">@tag</a>
+    }
     <div style="display: flex;">
-        @using (var _ = Html.BeginForm("RemovePost", "Posts", new { id = Model.ID }, FormMethod.Post))
+        @if (isAthed)
         {
-            <input style="display: inline;margin-right: 9px" type="submit" value="X"/>
+            <button class="btn" hx-post=@($"/posts/rm/{Model.ID}") hx-target="#posts" style="display: inline;margin-right: 9px;color: white">🗶</button>
+            <button class="btn" hx-get=@($"/posts/update/{Model.ID}") hx-target=@($"#p-{Model.ID}") style="display: block;margin-right: 9px;color: white">🖉</button>
         }
+    </div>
         <h2>@Model.PostTitle</h2>
+
+    @*
         @using (var _ = Html.BeginForm("Update", "Posts", new { id = Model.ID }, FormMethod.Get))
         {
             <input style="display: inline;margin-right: 9px" type="submit" value="edit"/>
         }
-    </div>
+    *@
     <p>@Markdown.ParseHtmlString(Model.PostBody)</p>
 </div>

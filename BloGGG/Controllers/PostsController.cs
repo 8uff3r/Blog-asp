@@ -1,8 +1,9 @@
 using BloGGG.Data;
 using BloGGG.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Linq.Expressions;
+using BloGGG.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol;
 
@@ -11,17 +12,24 @@ namespace BloGGG.Controllers;
 public class PostsController : Controller
 {
     private readonly PostsContext _context;
+    private readonly UserManager<IdentityUser> _userManager;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IAuthorizationService _authorizationService;
 
-    public PostsController(PostsContext postsContext, IServiceProvider serviceProvider)
+    public PostsController(PostsContext postsContext, UserManager<IdentityUser> userManager,
+        IServiceProvider serviceProvider, IAuthorizationService authorizationService)
     {
         _context = postsContext;
+        _userManager = userManager;
         _serviceProvider = serviceProvider;
+        _authorizationService = authorizationService;
     }
 
-    // GET
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
+        var uid = _userManager.GetUserId(User);
+        ViewData["uid"] = uid;
         return View(await _context.Posts.ToListAsync());
     }
 
@@ -35,12 +43,19 @@ public class PostsController : Controller
     public async Task<IActionResult> Add(PostModel p)
     {
         p.PostTags = p.PostTagsString.Replace(" ", "").Split(",");
+        var owner = await _userManager.GetUserAsync(User);
+        if (owner == null)
+        {
+            return null;
+        }
         _context.Add(new PostModel
         {
             PostAuthor = "noname",
             PostBody = p.PostBody,
             PostTags = p.PostTags,
-            PostTitle = p.PostTitle
+            OwnerID = _userManager.GetUserId(User),
+            PostTitle = p.PostTitle,
+            Owner = owner
         });
         await _context.SaveChangesAsync();
         return RedirectToAction("Index", "Posts");
@@ -58,6 +73,7 @@ public class PostsController : Controller
             await _context.SaveChangesAsync();
         }
 
+        return PartialView("posts", await _context.Posts.ToListAsync());
         return RedirectToAction("Index", "Posts");
     }
 
@@ -67,12 +83,14 @@ public class PostsController : Controller
         var result = await (from p in _context.Posts
             where p.ID == id
             select p).FirstOrDefaultAsync();
-        Console.WriteLine(result.ToJson());
-        return View(result);
+        return PartialView("Update", result);
     }
 
-    public async Task<IActionResult> Update(PostModel postModel)
+
+    [HttpPost("[controller]/update/{id:int}")]
+    public async Task<IActionResult> Update(PostModel postModel, int id)
     {
+        Console.WriteLine(postModel.ToJson());
         postModel.PostTags = postModel.PostTagsString.Replace(" ", "").Split(",");
         var result = await (from p in _context.Posts
             where p.ID == postModel.ID
@@ -86,6 +104,7 @@ public class PostsController : Controller
             await _context.SaveChangesAsync();
         }
 
+        return PartialView("post", result);
         return RedirectToAction("Index", "Posts");
     }
 }

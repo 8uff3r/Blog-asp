@@ -9,13 +9,9 @@
 <h2>Recent Posts</h2>
 @using (var form = Html.BeginForm(FormMethod.Get))
 {
-    <input class="btn bg-secondary" asp-action="Add" value="Add Post" type="submit"/>
+    <input class="btn bg-secondary text-light" asp-action="Add" value="Add Post" type="submit"/>
 }
 
 <br>
 <br>
-@foreach (var item in Model)
-{
-    @Html.Partial("post", item)
-    <br>
-}
+@Html.Partial("posts", Model)

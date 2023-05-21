@@ -2,10 +2,24 @@
 @{
     Model.PostTagsString = string.Join(",", Model.PostTags);
 }
-<h2>Add a Post</h2>
+<form hx-post="/posts/update/@Model.ID">
+    <h2>Editing the Post</h2>
+    <br/>
+    <br/>
+    <label>Post Title</label>
+    <input type="text" value="@Model.PostTitle" name="PostTitle"/>
+    <br/>
+    <br/>
+    <label>Post Tags</label>
+    <input type="text" value="@Model.PostTagsString" name="PostTagsString"/>
+    <br/>
+    <br/>
+    <textarea rows = "20"
+            cols = "130%" name="PostBody">@Model.PostBody</textarea>
 
-
-@using (var _ = Html.BeginForm("Update", "Posts", FormMethod.Post))
+    <input type="submit" class="btn bg-info" value="Update Post">
+</form>
+@*@using (var _ = Html.BeginForm("Update", "Posts", FormMethod.Post))
 {
     <div>
         @Html.LabelFor(m => m.PostTitle)
@@ -32,4 +46,4 @@
         })
     </div>
     <input type="submit" class="btn bg-info" value="Update Post">
-}
+}*@
